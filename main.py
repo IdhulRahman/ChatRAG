@@ -1,3 +1,4 @@
+import streamlit as st
 import os
 import time
 from config.llm_conf import create_llm
@@ -11,26 +12,8 @@ from llama_index.core import (
     Settings
 )
 
-def chat_loop(query_engine):
-    print("Start chatting with the system! Type 'exit' to end the chat.")
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() == "exit":
-            print("Exiting chat. Goodbye!")
-            break
-        
-        start_time = time.time() 
-
-        response = query_engine.query(user_input)
-        response.print_response_stream()
-
-        end_time = time.time() 
-        response_time = end_time - start_time  
-
-        print(f"Response time: {response_time:.2f} seconds")
-
-def main():
-    # Check if the embedding model folder exists
+# Initialize models and index
+def initialize_models_and_index():
     embedding_folder = "mxbai-rerank"
     if os.path.exists(embedding_folder):
         embed_model = create_embedding_model()
@@ -40,30 +23,42 @@ def main():
     
     Settings.embed_model = embed_model
 
-    # Configure the LLM
     llm = create_llm()
     Settings.llm = llm
 
-    # Check if the index folder already exists
     index_folder = "datavector"
     if not os.path.exists(index_folder):
-        # Load the documents
         documents = load_documents(["dataset/Data3.txt"])
-
-        # Create the index from documents
         index = create_index(documents, embed_model)
     else:
-        print(f"Folder '{index_folder}' exists, loading index from storage.")
-        
-        # Rebuild storage context and load index
         storage_context = StorageContext.from_defaults(persist_dir=index_folder)
         index = load_index_from_storage(storage_context, index_id="vector_index")
-        
-    # Set up the query engine
-    query_engine = setup_query_engine(index, llm)
+    
+    return setup_query_engine(index, llm)
 
-    # Start the chat loop
-    chat_loop(query_engine)
+def main():
+    st.title("Chatbot Interface")
+
+    # Initialize query engine
+    query_engine = initialize_models_and_index()
+
+    st.write("Start chatting with the system! Type 'exit' to end the chat.")
+
+    user_input = st.text_input("You:", "")
+
+    if st.button("Submit"):
+        if user_input.lower() == "exit":
+            st.write("Exiting chat. Goodbye!")
+        else:
+            with st.spinner('Regenerating response...'):
+                start_time = time.time()
+                response = query_engine.query(user_input)
+                response_text = response.get_text()  # Assuming this method gets the text
+                response_time = time.time() - start_time
+                
+                st.write("Response:")
+                st.write(response_text)
+                st.write(f"Response time: {response_time:.2f} seconds")
 
 if __name__ == "__main__":
     main()
