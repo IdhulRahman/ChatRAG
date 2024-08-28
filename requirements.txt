@@ -1,0 +1,5 @@
+llama-index-core 
+llama-index-embeddings-huggingface_optimum
+llama-index-llms-llama-cpp
+llama-index
+torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
