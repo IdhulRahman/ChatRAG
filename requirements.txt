@@ -2,3 +2,6 @@ llama-index-core
 llama-index-embeddings-huggingface_optimum
 llama-index-llms-llama-cpp
 llama-index
+torch
+torchaudio
+torchvision
