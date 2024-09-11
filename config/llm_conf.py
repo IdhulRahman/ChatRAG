@@ -15,7 +15,7 @@ def messages_to_prompt(
 def completion_to_prompt(completion: str) -> str:
     return f"\n</s>\n\n{completion}</s>\n\n"
 
-url1 = "https://huggingface.co/bartowski/llama-3-neural-chat-v2.2-8B-GGUF/resolve/main/llama-3-neural-chat-v2.2-8B-Q4_K_M.gguf" #5gb (recommended)
+url1 = "https://huggingface.co/bartowski/llama-3-neural-chat-v1-8b-GGUF/resolve/main/llama-3-neural-chat-v1-8b-Q4_K_M.gguf" #5gb (recommended)
 #url2 = "https://huggingface.co/bartowski/gemma-2-2b-it-abliterated-GGUF/resolve/main/gemma-2-2b-it-abliterated-Q8_0.gguf" 2gb
 #url3 = "https://huggingface.co/TheBloke/stablelm-zephyr-3b-GGUF/resolve/main/stablelm-zephyr-3b.Q5_K_M.gguf" 2gb
 
