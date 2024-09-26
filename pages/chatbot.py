@@ -1,5 +1,6 @@
 import os
-import streamlit as st
+from fastapi import FastAPI
+from pydantic import BaseModel
 from config.llm_conf import create_llm
 from config.doc_Loader import load_documents
 from config.embed_model import create_embedding_model, create_and_save_optimum_model
@@ -10,6 +11,13 @@ from llama_index.core import (
     load_index_from_storage,
     Settings
 )
+
+# Initialize FastAPI app
+app = FastAPI()
+
+# Define request body model
+class ChatRequest(BaseModel):
+    user_input: str
 
 # Function to initialize the chatbot engine
 def initialize_chatbot():
@@ -36,8 +44,11 @@ def initialize_chatbot():
     query_engine = setup_query_engine(index, llm)
     return query_engine
 
+# Initialize chatbot engine when app starts
+query_engine = initialize_chatbot()
+
 # Function to handle chatbot response
-def chat_with_bot(query_engine, user_input):
+def chat_with_bot(user_input):
     response = query_engine.query(user_input)
     response_text = ""
     if hasattr(response, "response_stream"):
@@ -47,72 +58,14 @@ def chat_with_bot(query_engine, user_input):
         response_text = str(response)
     return response_text
 
-# Streamlit page for chatbot with bubble chat interface
-def chatbot_page():
-    st.title("LLM Chatbot Interface")
-    st.write("Start chatting with the system below!")
+# POST endpoint to interact with the chatbot
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    user_input = request.user_input
+    response = chat_with_bot(user_input)
+    return {"user_input": user_input, "response": response}
 
-    # CSS for bubble chat style
-    st.markdown("""
-        <style>
-        .user-bubble {
-            background-color: #DCF8C6;
-            color: black;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            max-width: 70%;
-            text-align: left;
-            float: right;
-            clear: both;
-        }
-        .bot-bubble {
-            background-color: #ECECEC;
-            color: black;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            max-width: 70%;
-            text-align: left;
-            float: left;
-            clear: both;
-        }
-        .chat-container {
-            display: flex;
-            flex-direction: column; /* Keep normal order, new messages will appear below */
-            margin-bottom: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # Initialize chatbot engine
-    if 'query_engine' not in st.session_state:
-        st.session_state.query_engine = initialize_chatbot()
-
-    # Initialize chat history
-    if 'messages' not in st.session_state:
-        st.session_state.messages = []
-
-    # Display chat history in the chat column
-    with st.container():
-        st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-        for msg in st.session_state.messages:  # Messages displayed in normal order (new at the bottom)
-            st.markdown(f'<div class="user-bubble">You: {msg["user"]}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="bot-bubble">Bot: {msg["bot"]}</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # Use a temporary variable to capture user input
-    user_input = st.text_input("Type your message here and press Enter:")
-
-    # Automatically send message when user presses Enter or Send button
-    if st.button("Send") or user_input:
-        if user_input:
-            response = chat_with_bot(st.session_state.query_engine, user_input)
-            st.session_state.messages.append({"user": user_input, "bot": response})
-            st.rerun()  # Re-run the app to update UI with new messages
-
-# Main function to run the page
-if __name__ == "__main__":
-    chatbot_page()
+# GET endpoint for testing server is live
+@app.get("/")
+async def root():
+    return {"message": "Chatbot API is running!"}
