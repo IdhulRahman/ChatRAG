@@ -6,4 +6,5 @@ torch
 torchaudio
 torchvision
 llama-index-postprocessor-flag-embedding-reranker
-streamlit
+fastapi
+uvicorn
