@@ -15,15 +15,15 @@ def messages_to_prompt(
 def completion_to_prompt(completion: str) -> str:
     return f"\n</s>\n\n{completion}</s>\n\n"
 
-url1 = "https://huggingface.co/bartowski/llama-3-neural-chat-v1-8b-GGUF/resolve/main/llama-3-neural-chat-v1-8b-Q4_K_M.gguf" #5gb (recommended)
+#url1 = "https://huggingface.co/bartowski/llama-3-neural-chat-v2.2-8B-GGUF/resolve/main/llama-3-neural-chat-v2.2-8B-Q4_K_M.gguf" 5gb (recommended)
 #url2 = "https://huggingface.co/bartowski/gemma-2-2b-it-abliterated-GGUF/resolve/main/gemma-2-2b-it-abliterated-Q8_0.gguf" 2gb
 #url3 = "https://huggingface.co/TheBloke/stablelm-zephyr-3b-GGUF/resolve/main/stablelm-zephyr-3b.Q5_K_M.gguf" 2gb
 
 def create_llm() -> LlamaCPP:
     return LlamaCPP(
-        model_url=url1, #gunakan salah satu url diatas
-        model_path= None, #"LLM\llama-3-neural-chat-v1-8b-Q4_K_M.gguf" (example)
-        temperature=0.2,
+        model_url= None, 
+        model_path= "LLM\llama-3-neural-chat-v1-8b-Q4_K_M.gguf",
+        temperature=0.4,
         max_new_tokens=512,
         context_window=4096,
         generate_kwargs={},
@@ -69,17 +69,17 @@ Example Book Recommendations:
 
 1. Here are 5 book recommendations for you:
 
-   - **Title**: (Data from RAG file for Title)
-     **Author**: (Data from RAG file for Author)
-     **ISBN**: (Data from RAG file for ISBN)
-     **Rating**: (Data from RAG file for Rating)
+   - **Title**:
+     **Author**:
+     **ISBN**:
+     **Rating**:
      
 2. Berikut adalah 5 saran buku untuk Anda:
 
-   - **Judul**: (Data from RAG file for Judul)
-     **Penulis**: (Data from RAG file for Penulis)
-     **ISBN**: (Data from RAG file for ISBN)
-     **Rating**: (Data from RAG file for Rating)
+   - **Judul**:
+     **Penulis**:
+     **ISBN**:
+     **Rating**:
      
 4. User (English): How can I borrow a book?
    LLM: To borrow a book, please take your selected book to the circulation desk and present your library card.
