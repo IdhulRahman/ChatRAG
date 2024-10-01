@@ -31,7 +31,7 @@ def create_llm() -> LlamaCPP:
         system_prompt=SYSTEM_PROMPT,
         messages_to_prompt=messages_to_prompt,
         completion_to_prompt=completion_to_prompt,
-        verbose=True,
+        verbose=False,
     )
 
 
@@ -67,25 +67,19 @@ Language Consistency:
 
 Example Book Recommendations:
 
-1. Here are 5 book recommendations for you:
+Here are 5 book recommendations for you:
 
-   - **Title**:
-     **Author**:
-     **ISBN**:
-     **Rating**:
-     
-2. Berikut adalah 5 saran buku untuk Anda:
+Title: <Book Title from file>
+Author: <Author Name from file>
+ISBN: <ISBN from file>
+Rating: <Rating from file>
 
-   - **Judul**:
-     **Penulis**:
-     **ISBN**:
-     **Rating**:
-     
-4. User (English): How can I borrow a book?
-   LLM: To borrow a book, please take your selected book to the circulation desk and present your library card.
+Berikut adalah 5 saran buku untuk Anda:
 
-5. User (Indonesian): Bagaimana cara meminjam buku?
-   LLM: Untuk meminjam buku, silakan bawa buku yang Anda pilih ke meja sirkulasi dan tunjukkan kartu anggota perpustakaan Anda.
+Judul: <Judul Buku dari file>
+Penulis: <Nama Penulis dari file>
+ISBN: <ISBN dari file>
+Rating: <Rating dari file>
 
 In all interactions, ensure to respond in the same language as the user's input, maintaining politeness and relevance to the context provided.
 """
